@@ -3,37 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OpenSource Hub - Login</title>
+    <title>OpenSource Hub - Create Account</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <div id="navbar"></div>
 
     <main class="container">
-        <div class="card form-card" style="margin-top: 2rem;">
-            <h2>Welcome Back</h2>
-            <p class="text-muted">Log in to manage your bookmarks and contributions.</p>
+        <div class="card form-card" style="margin-top: 2rem; max-width: 480px;">
+            <div style="margin-bottom: 1.5rem;">
+                <span class="tag" style="margin-bottom: 0.5rem;">Get Started</span>
+                <h2>Create Your Account</h2>
+                <p class="text-muted" style="font-size: 0.95rem;">Join the OpenSource Hub community to track contributions and bookmark projects.</p>
+            </div>
             
             <div id="errorMsg" class="error-msg"></div>
 
-            <form id="loginForm">
+            <form id="registerForm">
+                <!-- Name Row (First & Last Name) -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label for="firstName">First Name</label>
+                        <input type="text" id="firstName" required placeholder="Gauri">
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Last Name</label>
+                        <input type="text" id="lastName" required placeholder="Tiwari">
+                    </div>
+                </div>
+
+                <!-- Hidden combined name field for backend compatibility -->
+                <input type="hidden" id="name">
+
                 <div class="form-group">
                     <label for="email">Email Address</label>
                     <input type="email" id="email" required placeholder="you@example.com">
                 </div>
+
                 <div class="form-group">
                     <label for="password">Password</label>
-                    <input type="password" id="password" required placeholder="••••••••">
+                    <input type="password" id="password" required placeholder="At least 6 characters">
                 </div>
-                <button type="submit" id="loginBtn" class="btn btn-primary btn-block">Login</button>
+
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" required placeholder="Re-enter your password">
+                </div>
+
+                <button type="submit" id="registerBtn" class="btn btn-primary btn-block" style="margin-top: 1rem;">Create Account</button>
             </form>
-            <p style="margin-top: 1rem; text-align: center; font-size: 0.9rem;">
-                Don't have an account? <a href="register.html">Register here</a>
+
+            <p style="margin-top: 1.5rem; text-align: center; font-size: 0.9rem;" class="text-muted">
+                Already have an account? <a href="login.html" style="color: var(--primary); font-weight: 600; text-decoration: none;">Log in</a>
             </p>
         </div>
     </main>
 
     <div id="footer"></div>
+
+    <script>
+        // Automatically combine first and last name into the backend 'name' ID on submit
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+            document.getElementById('name').value = `${firstName} ${lastName}`;
+        });
+    </script>
     <script src="js/navbar.js"></script>
+        <script src="js/navbar.js"></script>
+    <script type="module" src="js/auth.js"></script>
+</body>
 </body>
 </html>
