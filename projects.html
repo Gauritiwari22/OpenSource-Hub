@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OpenSource Hub - Projects</title>
+    <title>OpenSource Hub - Explore Projects</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -11,7 +11,77 @@
 
     <main class="container" style="padding: 3rem 0;">
         <h1>Explore Open Source Projects</h1>
-        <p>Filter projects by category, language, or difficulty.</p>
+        <p class="text-muted" style="margin-bottom: 2rem;">Find projects matching your interests, programming language, and skill level.</p>
+
+        <!-- Filter Bar -->
+        <div class="card" style="margin-bottom: 2.5rem; background: #ffffff;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; align-items: end;">
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label for="searchQuery">Search</label>
+                    <input type="text" id="searchQuery" placeholder="Search by title or description...">
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label for="categoryFilter">Category</label>
+                    <select id="categoryFilter">
+                        <option value="">All Categories</option>
+                        <option value="Education">Education</option>
+                        <option value="Development">Development</option>
+                        <option value="Guide">Guide</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label for="languageFilter">Language</label>
+                    <select id="languageFilter">
+                        <option value="">All Languages</option>
+                        <option value="JavaScript">JavaScript</option>
+                        <option value="Python">Python</option>
+                        <option value="Documentation">Documentation</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label for="difficultyFilter">Difficulty</label>
+                    <select id="difficultyFilter">
+                        <option value="">All Difficulties</option>
+                        <option value="Beginner">Beginner</option>
+                        <option value="Intermediate">Intermediate</option>
+                        <option value="Advanced">Advanced</option>
+                    </select>
+                </div>
+            </div>
+            <div style="margin-top: 1rem; display: flex; gap: 1rem;">
+                <button id="resetFilters" class="btn" style="padding: 0.5rem 1rem;">Reset Filters</button>
+            </div>
+        </div>
+
+        <!-- Loading Spinner (Hidden by default) -->
+        <div id="loadingSpinner" class="spinner hidden"></div>
+
+        <!-- Empty State Message (Hidden by default) -->
+        <div id="emptyState" class="empty-state hidden">
+            <h3>No projects found</h3>
+            <p>Try adjusting your search or filters to find what you're looking for[cite: 5].</p>
+        </div>
+
+        <!-- Project Cards Grid -->
+        <div id="projectsGrid" class="grid">
+            <!-- Sample Project Card matching requirements -->
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
+                    <div>
+                        <span class="tag">JavaScript</span>
+                        <span class="badge badge-beginner">Beginner</span>
+                    </div>
+                    <!-- Bookmark star button -->
+                    <button class="bookmark-btn" title="Bookmark project">★</button>
+                </div>
+                <div class="card-title">FreeCodeCamp Curriculum</div>
+                <p class="text-muted" style="font-size: 0.95rem;">Open source codebase and curriculum for learning web development and programming.</p>
+                <div class="card-footer">
+                    <span style="font-size: 0.85rem; color: var(--text-muted);">Category: Education</span>
+                    <a href="https://github.com/freeCodeCamp/freeCodeCamp" target="_blank" class="btn btn-primary" style="padding: 6px 12px; font-size: 0.85rem; text-decoration: none;">View on GitHub</a>
+                </div>
+            </div>
+        </div>
     </main>
 
     <div id="footer"></div>

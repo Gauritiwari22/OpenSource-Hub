@@ -4,23 +4,55 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OpenSource Hub - Discover, Learn &amp; Contribute</title>
+  <title>OpenSource Hub - Discover, Learn & Contribute</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
+  <!-- Navbar injected by navbar.js -->
   <div id="navbar"></div>
 
-  <main class="container" style="padding: 3rem 0;">
-    <h1>Welcome to OpenSource Hub</h1>
-    <p>Discover, learn, and contribute to open-source projects easily.</p>
-    <a href="projects.html" class="btn btn-primary"
-      style="margin-top: 1rem; display: inline-block; text-decoration: none;">Explore Projects</a>
-  </main>
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <h1>Discover, Learn & Contribute to Open Source</h1>
+      <p>Find student-friendly open-source projects tailored to your skills, and kickstart your developer journey with confidence.</p>
+      <a href="projects.html" class="btn btn-primary" style="text-decoration: none; padding: 0.8rem 1.75rem; font-size: 1rem;">Explore Projects →</a>
+    </div>
+  </section>
 
+  <!-- Bento Grid "How It Works" Section -->
+  <section class="section container" style="padding: 3rem 0 5rem;">
+    <h2 class="text-center" style="margin-bottom: 2.5rem; font-size: 2rem;">How It Works</h2>
+    <div class="bento-grid">
+      <div class="card bento-span-2" style="background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);">
+        <span class="tag" style="margin-bottom: 1rem;">Step 01</span>
+        <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--primary);">Discover Curated Projects</h3>
+        <p class="text-muted">Browse through hand-picked open-source repositories filtered precisely by your favorite programming language, tech stack, and difficulty level.</p>
+      </div>
+      <div class="card">
+        <span class="tag" style="margin-bottom: 1rem;">Step 02</span>
+        <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem;">Learn the Ropes</h3>
+        <p class="text-muted" style="font-size: 0.95rem;">Read beginner-friendly guides on Git workflows and pull requests.</p>
+      </div>
+      <div class="card">
+        <span class="tag" style="margin-bottom: 1rem;">Step 03</span>
+        <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem;">Collaborate</h3>
+        <p class="text-muted" style="font-size: 0.95rem;">Connect with fellow students in community discussions.</p>
+      </div>
+      <div class="card bento-span-2" style="background: linear-gradient(135deg, #eef2ff 0%, #ffffff 100%); border-color: #c7d2fe;">
+        <span class="tag" style="margin-bottom: 1rem; background: #c7d2fe; color: #312e81;">Community Driven</span>
+        <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem; color: #312e81;">Built for Student Developers</h3>
+        <p style="color: #4338ca;">No intimidating contribution barriers. Everything is structured to help you make your very first open-source commit smoothly.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer injected by navbar.js -->
   <div id="footer"></div>
+
   <script src="js/navbar.js"></script>
 </body>
 

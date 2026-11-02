@@ -9,7 +9,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     <li><a href="projects.html" style="text-decoration: none; color: inherit;">Projects</a></li>
                     <li><a href="guides.html" style="text-decoration: none; color: inherit;">Guides</a></li>
                     <li><a href="community.html" style="text-decoration: none; color: inherit;">Community</a></li>
-                    <li><a href="login.html" class="btn btn-primary" style="text-decoration: none; padding: 0.5rem 1rem; border-radius: 4px;">Login / Register</a></li>
+                    <div style="display: flex; gap: 0.75rem;">
+                        <li><a href="login.html" class="btn btn-primary" style="text-decoration: none; padding: 0.5rem 1rem; border-radius: 4px; color: #ffffff;">Login</a></li>
+                        <li><a href="register.html" class="btn btn-primary" style="text-decoration: none; padding: 0.5rem 1rem; border-radius: 4px; color: #ffffff;">Register</a></li>
+                    </div>
                 </ul>
             </div>
         </nav>
