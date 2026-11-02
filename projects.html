@@ -10,8 +10,8 @@
     <div id="navbar"></div>
 
     <main class="container" style="padding: 3rem 0;">
-        <h1>Explore Open Source Projects</h1>
-        <p class="text-muted" style="margin-bottom: 2rem;">Find projects matching your interests, programming language, and skill level.</p>
+        <h1 style="margin-bottom: 0.5rem;">Explore Open Source Projects</h1>
+        <p class="text-muted" style="margin-bottom: 2rem;">Find repositories matching your interests, programming language, and skill level.</p>
 
         <!-- Filter Bar -->
         <div class="card" style="margin-bottom: 2.5rem; background: #ffffff;">
@@ -35,6 +35,7 @@
                         <option value="">All Languages</option>
                         <option value="JavaScript">JavaScript</option>
                         <option value="Python">Python</option>
+                        <option value="TypeScript">TypeScript</option>
                         <option value="Documentation">Documentation</option>
                     </select>
                 </div>
@@ -48,43 +49,111 @@
                     </select>
                 </div>
             </div>
-            <div style="margin-top: 1rem; display: flex; gap: 1rem;">
-                <button id="resetFilters" class="btn" style="padding: 0.5rem 1rem;">Reset Filters</button>
+            <div style="margin-top: 1.25rem; display: flex; gap: 1rem;">
+                <button id="resetFilters" class="btn" style="padding: 0.5rem 1rem; background: #f1f5f9; border-color: var(--border);">Reset Filters</button>
             </div>
         </div>
 
-        <!-- Loading Spinner (Hidden by default) -->
-        <div id="loadingSpinner" class="spinner hidden"></div>
-
-        <!-- Empty State Message (Hidden by default) -->
-        <div id="emptyState" class="empty-state hidden">
-            <h3>No projects found</h3>
-            <p>Try adjusting your search or filters to find what you're looking for[cite: 5].</p>
+        <div id="emptyState" class="card text-center hidden" style="padding: 3rem;">
+            <h3>No matching projects found</h3>
+            <p class="text-muted" style="margin-top: 0.5rem;">Try adjusting your search terms or filter selections.</p>
         </div>
 
-        <!-- Project Cards Grid -->
-        <div id="projectsGrid" class="grid">
-            <!-- Sample Project Card matching requirements -->
-            <div class="card">
-                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
-                    <div>
-                        <span class="tag">JavaScript</span>
-                        <span class="badge badge-beginner">Beginner</span>
-                    </div>
-                    <!-- Bookmark star button -->
-                    <button class="bookmark-btn" title="Bookmark project">★</button>
-                </div>
-                <div class="card-title">FreeCodeCamp Curriculum</div>
-                <p class="text-muted" style="font-size: 0.95rem;">Open source codebase and curriculum for learning web development and programming.</p>
-                <div class="card-footer">
-                    <span style="font-size: 0.85rem; color: var(--text-muted);">Category: Education</span>
-                    <a href="https://github.com/freeCodeCamp/freeCodeCamp" target="_blank" class="btn btn-primary" style="padding: 6px 12px; font-size: 0.85rem; text-decoration: none;">View on GitHub</a>
-                </div>
-            </div>
-        </div>
+        <div id="projectsGrid" class="grid"></div>
     </main>
 
     <div id="footer"></div>
+
+    <script>
+        const projects = [
+            { title: "FreeCodeCamp Curriculum", description: "Open source codebase and curriculum for learning web development and programming.", category: "Education", language: "JavaScript", difficulty: "Beginner", url: "https://github.com/freeCodeCamp/freeCodeCamp" },
+            { title: "Public APIs List", description: "A collective list of free JSON APIs for use in software development and student apps.", category: "Development", language: "Python", difficulty: "Intermediate", url: "https://github.com/public-apis/public-apis" },
+            { title: "First Contributions", description: "Help beginners get started with open-source contributions through a simple tutorial project.", category: "Guide", language: "Documentation", difficulty: "Beginner", url: "https://github.com/firstcontributions/first-contributions" },
+            { title: "React Native Framework", description: "A framework for building native applications using React for iOS and Android.", category: "Development", language: "JavaScript", difficulty: "Advanced", url: "https://github.com/facebook/react-native" },
+            { title: "VS Code Source Code", description: "Visual Studio Code is a code editor redefined and optimized for building modern web apps.", category: "Development", language: "TypeScript", difficulty: "Advanced", url: "https://github.com/microsoft/vscode" },
+            { title: "TensorFlow Documentation", description: "An open source machine learning framework for everyone with guides and tutorials.", category: "Education", language: "Documentation", difficulty: "Intermediate", url: "https://github.com/tensorflow/docs" }
+        ];
+
+        const grid = document.getElementById("projectsGrid");
+        const searchQuery = document.getElementById("searchQuery");
+        const categoryFilter = document.getElementById("categoryFilter");
+        const languageFilter = document.getElementById("languageFilter");
+        const difficultyFilter = document.getElementById("difficultyFilter");
+        const resetBtn = document.getElementById("resetFilters");
+        const emptyState = document.getElementById("emptyState");
+
+        function handleProjectClick(url) {
+            const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+            if (!isLoggedIn) {
+                alert("Please log in or register to access project links!");
+                window.location.href = "register.html";
+            } else {
+                window.open(url, "_blank");
+            }
+        }
+
+        function renderProjects(data) {
+            grid.innerHTML = "";
+            if (data.length === 0) {
+                emptyState.classList.remove("hidden");
+                return;
+            }
+            emptyState.classList.add("hidden");
+
+            data.forEach(p => {
+                const badgeClass = p.difficulty === 'Beginner' ? 'badge-beginner' : p.difficulty === 'Intermediate' ? 'badge-intermediate' : 'tag';
+                const card = document.createElement("div");
+                card.className = "card";
+                card.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+                        <div>
+                            <span class="tag">${p.language}</span>
+                            <span class="badge ${badgeClass}">${p.difficulty}</span>
+                        </div>
+                    </div>
+                    <h3 class="card-title" style="font-size: 1.15rem; margin-bottom: 8px;">${p.title}</h3>
+                    <p class="text-muted" style="font-size: 0.95rem; margin-bottom: 1.5rem;">${p.description}</p>
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 1rem;">
+                        <span style="font-size: 0.85rem; color: var(--text-muted);">${p.category}</span>
+                        <button onclick="handleProjectClick('${p.url}')" class="btn btn-primary" style="padding: 6px 14px; font-size: 0.85rem;">View on GitHub</button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function filterProjects() {
+            const query = searchQuery.value.toLowerCase();
+            const cat = categoryFilter.value;
+            const lang = languageFilter.value;
+            const diff = difficultyFilter.value;
+
+            const filtered = projects.filter(p => {
+                const matchesQuery = p.title.toLowerCase().includes(query) || p.description.toLowerCase().includes(query);
+                const matchesCat = !cat || p.category === cat;
+                const matchesLang = !lang || p.language === lang;
+                const matchesDiff = !diff || p.difficulty === diff;
+                return matchesQuery && matchesCat && matchesLang && matchesDiff;
+            });
+
+            renderProjects(filtered);
+        }
+
+        searchQuery.addEventListener("input", filterProjects);
+        categoryFilter.addEventListener("change", filterProjects);
+        languageFilter.addEventListener("change", filterProjects);
+        difficultyFilter.addEventListener("change", filterProjects);
+
+        resetBtn.addEventListener("click", () => {
+            searchQuery.value = "";
+            categoryFilter.value = "";
+            languageFilter.value = "";
+            difficultyFilter.value = "";
+            renderProjects(projects);
+        });
+
+        renderProjects(projects);
+    </script>
     <script src="js/navbar.js"></script>
 </body>
 </html>

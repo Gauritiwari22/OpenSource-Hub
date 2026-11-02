@@ -35,5 +35,13 @@
 
     <div id="footer"></div>
     <script src="js/navbar.js"></script>
+    <script>
+    document.getElementById("loginForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        // Set logged-in state
+        localStorage.setItem("isLoggedIn", "true");
+        window.location.href = "dashboard.html";
+    });
+</script>
 </body>
 </html>
