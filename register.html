@@ -70,17 +70,5 @@
         });
     </script>
     <script src="js/navbar.js"></script>
-    <script>
-    document.getElementById("registerForm").addEventListener("submit", (e) => {
-        e.preventDefault();
-        const firstName = document.getElementById('firstName').value.trim();
-        const lastName = document.getElementById('lastName').value.trim();
-        document.getElementById('name').value = `${firstName} ${lastName}`;
-        
-        // Set logged-in state
-        localStorage.setItem("isLoggedIn", "true");
-        window.location.href = "dashboard.html";
-    });
-</script>
 </body>
 </html>
