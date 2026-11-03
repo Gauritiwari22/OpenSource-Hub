@@ -24,19 +24,12 @@
                     <label for="categoryFilter">Category</label>
                     <select id="categoryFilter">
                         <option value="">All Categories</option>
-                        <option value="Education">Education</option>
-                        <option value="Development">Development</option>
-                        <option value="Guide">Guide</option>
                     </select>
                 </div>
                 <div class="form-group" style="margin-bottom: 0;">
                     <label for="languageFilter">Language</label>
                     <select id="languageFilter">
                         <option value="">All Languages</option>
-                        <option value="JavaScript">JavaScript</option>
-                        <option value="Python">Python</option>
-                        <option value="TypeScript">TypeScript</option>
-                        <option value="Documentation">Documentation</option>
                     </select>
                 </div>
                 <div class="form-group" style="margin-bottom: 0;">
@@ -54,6 +47,13 @@
             </div>
         </div>
 
+        <!-- Loading, error and empty states -->
+        <div id="loadingState" class="text-center hidden" style="padding: 3rem;">
+            <p class="text-muted">Loading projects...</p>
+        </div>
+
+        <div id="errorState" class="error-msg hidden"></div>
+
         <div id="emptyState" class="card text-center hidden" style="padding: 3rem;">
             <h3>No matching projects found</h3>
             <p class="text-muted" style="margin-top: 0.5rem;">Try adjusting your search terms or filter selections.</p>
@@ -64,15 +64,9 @@
 
     <div id="footer"></div>
 
-    <script>
-        const projects = [
-            { title: "FreeCodeCamp Curriculum", description: "Open source codebase and curriculum for learning web development and programming.", category: "Education", language: "JavaScript", difficulty: "Beginner", url: "https://github.com/freeCodeCamp/freeCodeCamp" },
-            { title: "Public APIs List", description: "A collective list of free JSON APIs for use in software development and student apps.", category: "Development", language: "Python", difficulty: "Intermediate", url: "https://github.com/public-apis/public-apis" },
-            { title: "First Contributions", description: "Help beginners get started with open-source contributions through a simple tutorial project.", category: "Guide", language: "Documentation", difficulty: "Beginner", url: "https://github.com/firstcontributions/first-contributions" },
-            { title: "React Native Framework", description: "A framework for building native applications using React for iOS and Android.", category: "Development", language: "JavaScript", difficulty: "Advanced", url: "https://github.com/facebook/react-native" },
-            { title: "VS Code Source Code", description: "Visual Studio Code is a code editor redefined and optimized for building modern web apps.", category: "Development", language: "TypeScript", difficulty: "Advanced", url: "https://github.com/microsoft/vscode" },
-            { title: "TensorFlow Documentation", description: "An open source machine learning framework for everyone with guides and tutorials.", category: "Education", language: "Documentation", difficulty: "Intermediate", url: "https://github.com/tensorflow/docs" }
-        ];
+    <script type="module">
+        import { getProjects, getFilterOptions } from './js/projects.js';
+        import { getCurrentUser, onAuthChange } from './js/auth.js';
 
         const grid = document.getElementById("projectsGrid");
         const searchQuery = document.getElementById("searchQuery");
@@ -81,78 +75,141 @@
         const difficultyFilter = document.getElementById("difficultyFilter");
         const resetBtn = document.getElementById("resetFilters");
         const emptyState = document.getElementById("emptyState");
+        const loadingState = document.getElementById("loadingState");
+        const errorState = document.getElementById("errorState");
 
-        function handleProjectClick(url) {
-            const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-            if (!isLoggedIn) {
-                alert("Please log in or register to access project links!");
-                window.location.href = "register.html";
+        let currentUser = null;
+        let requestId = 0;
+
+        function esc(text) {
+            const d = document.createElement("div");
+            d.textContent = text ?? "";
+            return d.innerHTML;
+        }
+
+        function safeUrl(url) {
+            return /^https?:\/\//i.test(url || "") ? url : "#";
+        }
+
+        function badgeClass(difficulty) {
+            if (difficulty === "Beginner") return "badge-beginner";
+            if (difficulty === "Intermediate") return "badge-intermediate";
+            if (difficulty === "Advanced") return "badge-advanced";
+            return "tag";
+        }
+
+        function showLoading(on) { 
+            if (on) {
+                loadingState.classList.remove("hidden");
             } else {
-                window.open(url, "_blank");
+                loadingState.classList.add("hidden");
+            }
+        }
+
+        function showError(msg) {
+            if (msg) {
+                errorState.textContent = msg;
+                errorState.classList.remove("hidden");
+            } else {
+                errorState.classList.add("hidden");
             }
         }
 
         function renderProjects(data) {
             grid.innerHTML = "";
-            if (data.length === 0) {
+            if (!data || data.length === 0) {
                 emptyState.classList.remove("hidden");
                 return;
             }
             emptyState.classList.add("hidden");
 
             data.forEach(p => {
-                const badgeClass = p.difficulty === 'Beginner' ? 'badge-beginner' : p.difficulty === 'Intermediate' ? 'badge-intermediate' : 'tag';
                 const card = document.createElement("div");
                 card.className = "card";
                 card.innerHTML = `
                     <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
                         <div>
-                            <span class="tag">${p.language}</span>
-                            <span class="badge ${badgeClass}">${p.difficulty}</span>
+                            <span class="tag">${esc(p.language)}</span>
+                            <span class="badge ${badgeClass(p.difficulty)}">${esc(p.difficulty)}</span>
                         </div>
+                        <button id="bookmark-${p.id}" class="bookmark-btn" data-id="${p.id}" aria-label="Bookmark" style="background:none;border:none;font-size:1.3rem;cursor:pointer;">☆</button>
                     </div>
-                    <h3 class="card-title" style="font-size: 1.15rem; margin-bottom: 8px;">${p.title}</h3>
-                    <p class="text-muted" style="font-size: 0.95rem; margin-bottom: 1.5rem;">${p.description}</p>
+                    <h3 class="card-title" style="font-size: 1.15rem; margin-bottom: 8px;">${esc(p.title)}</h3>
+                    <p class="text-muted" style="font-size: 0.95rem; margin-bottom: 1.5rem;">${esc(p.description)}</p>
                     <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 1rem;">
-                        <span style="font-size: 0.85rem; color: var(--text-muted);">${p.category}</span>
-                        <button onclick="handleProjectClick('${p.url}')" class="btn btn-primary" style="padding: 6px 14px; font-size: 0.85rem;">View on GitHub</button>
+                        <span style="font-size: 0.85rem; color: var(--text-muted);">${esc(p.category)}</span>
+                        <a href="${esc(safeUrl(p.github_url))}" target="_blank" rel="noopener noreferrer" class="btn btn-primary github-link" style="padding: 6px 14px; font-size: 0.85rem;">View on GitHub</a>
                     </div>
                 `;
                 grid.appendChild(card);
             });
         }
 
-        function filterProjects() {
-            const query = searchQuery.value.toLowerCase();
-            const cat = categoryFilter.value;
-            const lang = languageFilter.value;
-            const diff = difficultyFilter.value;
+        grid.addEventListener("click", (e) => {
+            const link = e.target.closest(".github-link");
+            if (link && !currentUser) {
+                e.preventDefault();
+                alert("Please log in or register to access project links!");
+                window.location.href = "register.html";
+            }
+        });
 
-            const filtered = projects.filter(p => {
-                const matchesQuery = p.title.toLowerCase().includes(query) || p.description.toLowerCase().includes(query);
-                const matchesCat = !cat || p.category === cat;
-                const matchesLang = !lang || p.language === lang;
-                const matchesDiff = !diff || p.difficulty === diff;
-                return matchesQuery && matchesCat && matchesLang && matchesDiff;
-            });
+        async function loadProjects() {
+            const myId = ++requestId;
+            showError("");
+            emptyState.classList.add("hidden");
+            grid.innerHTML = "";
+            showLoading(true);
 
-            renderProjects(filtered);
+            try {
+                const list = await getProjects({
+                    category: categoryFilter.value,
+                    language: languageFilter.value,
+                    difficulty: difficultyFilter.value,
+                    search: searchQuery.value
+                });
+                if (myId !== requestId) return;
+                showLoading(false);
+                renderProjects(list);
+            } catch (err) {
+                if (myId !== requestId) return;
+                showLoading(false);
+                showError(err.message);
+            }
         }
 
-        searchQuery.addEventListener("input", filterProjects);
-        categoryFilter.addEventListener("change", filterProjects);
-        languageFilter.addEventListener("change", filterProjects);
-        difficultyFilter.addEventListener("change", filterProjects);
+        async function fillDropdowns() {
+            try {
+                const { categories, languages } = await getFilterOptions();
+                categories.forEach(c => categoryFilter.add(new Option(c, c)));
+                languages.forEach(l => languageFilter.add(new Option(l, l)));
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        let timer;
+        searchQuery.addEventListener("input", () => {
+            clearTimeout(timer);
+            timer = setTimeout(loadProjects, 300);
+        });
+        categoryFilter.addEventListener("change", loadProjects);
+        languageFilter.addEventListener("change", loadProjects);
+        difficultyFilter.addEventListener("change", loadProjects);
 
         resetBtn.addEventListener("click", () => {
             searchQuery.value = "";
             categoryFilter.value = "";
             languageFilter.value = "";
             difficultyFilter.value = "";
-            renderProjects(projects);
+            loadProjects();
         });
 
-        renderProjects(projects);
+        // Start
+        currentUser = await getCurrentUser();
+        onAuthChange(user => { currentUser = user; });
+        await fillDropdowns();
+        loadProjects();
     </script>
     <script src="js/navbar.js"></script>
 </body>
